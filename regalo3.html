@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feliz primer mes de novios</title>
+  <style>
+    :root{
+      --txt:#111;
+      --accent:#e6002e;
+      --chip-bg:rgba(255,255,255,.18);
+      --chip-br:rgba(0,0,0,.15);
+    }
+    body{
+      margin:0; font-family:'Segoe UI', cursive, sans-serif; color:var(--txt); text-align:center; overflow-x:hidden;
+      background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
+      background-size:400% 400%; animation:gradientBG 12s ease infinite;
+    }
+    @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    header{padding:2rem; background:rgba(255, 255, 255, .65); border-bottom:2px solid rgba(0,0,0,.1)}
+    h1{margin:0; font-size:2.8rem; color:var(--accent); text-shadow:0 2px 10px rgba(0,0,0,.08)}
+    h2{font-size:1.35rem; font-weight:600; margin-top:.5rem; color:#222}
+
+    .foto-wrap{max-width:850px; margin:1.2rem auto 0; padding:0 1rem}
+    figure.foto{margin:0 auto 1rem; display:inline-block; background:rgba(255,255,255,.92);
+      border-radius:18px; padding:14px 14px 10px; box-shadow:0 10px 30px rgba(0,0,0,.25); backdrop-filter:blur(8px)}
+    .foto img{display:block; max-width:78vw; width:520px; height:auto; border-radius:12px}
+    .foto figcaption{margin-top:10px; font-size:.95rem; background:rgba(0,0,0,.06); color:#111; padding:6px 10px; border-radius:10px}
+
+    .topbar{
+      max-width:1000px; margin:0.8rem auto 0; padding:10px; display:flex; gap:10px; flex-wrap:wrap;
+      justify-content:center; align-items:center;
+    }
+    .pill{
+      background:var(--chip-bg); border:1px solid var(--chip-br);
+      padding:.6rem 1rem; border-radius:999px; display:flex; align-items:center; gap:.6rem;
+      box-shadow:0 6px 18px rgba(0,0,0,.12); backdrop-filter:blur(6px); color:#111;
+    }
+    .pill strong{color:#000}
+    .pill .label{font-weight:700; color:var(--accent)}
+    .btn{
+      border:none; border-radius:999px; padding:.55rem 1rem; font-weight:800; cursor:pointer;
+      background:#fff; color:var(--accent); transition:transform .2s ease, background .2s ease, box-shadow .2s;
+      box-shadow:0 6px 16px rgba(0,0,0,.12);
+    }
+    .btn:hover{transform:scale(1.06); background:#ffe6ec}
+
+    .carta-wrap{max-width:850px; margin:1rem auto 0; padding:0 1rem}
+    .carta{
+      margin:0 auto; text-align:left; line-height:1.6; font-size:1.05rem; color:#111;
+      background:rgba(255,255,255,.95); border:1px solid rgba(0,0,0,.12);
+      border-radius:18px; padding:1.2rem; box-shadow:0 10px 30px rgba(0,0,0,.22);
+      display:none; opacity:0; transform:translateY(12px); transition:.45s ease;
+    }
+    .carta.show{display:block; opacity:1; transform:translateY(0)}
+    .carta strong{background:rgba(255,0,46,.09); color:#000; padding:0 .35rem; border-radius:8px}
+
+    .quiz-container{
+      max-width:850px; margin:1.2rem auto 2rem; padding:2rem; background:rgba(255,255,255,.95);
+      border-radius:20px; box-shadow:0 0 30px rgba(0,0,0,.2); color:#111;
+    }
+    .question{margin:1.8rem 0; font-size:1.15rem; text-align:left}
+    .question p{font-weight:900; margin-bottom:.5rem; color:#000}
+    label{display:block; margin:.5rem 0; background:rgba(0,0,0,.06); color:#111; padding:.7rem; border-radius:10px; cursor:pointer; transition:.3s}
+    label:hover{background:rgba(0,0,0,.12); transform:scale(1.02)}
+    input[type="radio"]{margin-right:10px}
+    button.action{background:#fff; color:var(--accent); border:2px solid var(--accent); padding:1rem 2.5rem; font-size:1.1rem; border-radius:30px; cursor:pointer; margin-top:2rem; transition:all .3s ease; font-weight:900}
+    button.action:hover{transform:scale(1.06); background:#ffe6ec}
+    #resultado{margin-top:2rem; font-size:1.2rem; font-weight:900; color:#000; background:rgba(0,0,0,.08); padding:1rem; border-radius:12px}
+
+    .final{margin:2.2rem auto 3rem; font-size:1.6rem; font-weight:900; color:#000; text-shadow:0 2px 6px rgba(0,0,0,.08)}
+
+    /* Corazones (los dejamos) */
+    .heart{position:fixed; bottom:-10px; font-size:2rem; animation:flotar 7s linear infinite; color:#ff1744; opacity:.7; z-index:-2; pointer-events:none}
+    @keyframes flotar{from{transform:translateY(0); opacity:1} to{transform:translateY(-110vh); opacity:0}}
+
+    /* 🌹 PÉTALOS CAYENDO (fondo) */
+    #petals{
+      position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:-3;
+    }
+    .petal{
+      position:absolute; top:-10vh; font-size:24px; opacity:.9;
+      animation:petalFall linear forwards, petalSwing ease-in-out infinite;
+      will-change: transform, opacity;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.15));
+    }
+    @keyframes petalFall{
+      to{ transform:translateY(120vh) rotate(360deg); opacity:.95; }
+    }
+    @keyframes petalSwing{
+      0%,100%{ transform: translateX(0) }
+      50%    { transform: translateX(20px) }
+    }
+
+    /* 🎉 CELEBRACIÓN (overlay + confeti) */
+    #celebration{
+      position:fixed; inset:0; background:rgba(255,255,255,.75);
+      display:none; align-items:center; justify-content:center; flex-direction:column;
+      z-index:9999; pointer-events:none;
+    }
+    #celebration.show{display:flex; animation:fadeIn .25s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .big-msg{
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 900; color:#d1002b; text-shadow:0 4px 14px rgba(0,0,0,.2);
+      padding: .6rem 1rem; border-radius:18px; background:rgba(255,255,255,.85);
+      border:2px solid rgba(0,0,0,.07);
+    }
+    #emojiRain{
+      position:absolute; top:15%; width:100%; text-align:center; font-size:2.2rem;
+      animation:bounce 1.2s ease infinite;
+    }
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    #confetti{
+      position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:10000;
+    }
+    .confetti-piece{
+      position:absolute; top:-10px; width:8px; height:14px;
+      opacity:.9; animation:confetti-fall linear forwards;
+      transform: rotate(0deg);
+    }
+    @keyframes confetti-fall{
+      to{ transform: translateY(110vh) rotate(720deg); opacity:1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🌹 contenedor de pétalos -->
+  <div id="petals"></div>
+
+  <header>
+    <h1>❤️ Feliz primer mes de novios ❤️</h1>
+    <h2>💌 A ver cuánto sabes de nosotros 💌</h2>
+  </header>
+
+  <!-- CONTROLES: Música + DOS contadores + Carta -->
+  <div class="topbar">
+    <div class="pill">
+      <button id="musicBtn" class="btn">▶️ Reproducir música</button>
+      <small id="musicState">pausada</small>
+      <audio id="bgMusic" src="cancion.mp3" loop preload="auto"></audio>
+    </div>
+
+    <div class="pill" id="contadorJulio">
+      <span class="label">⏳ Desde 23/07/2025:</span>
+      <strong><span id="jDias">0</span>d</strong>
+      <strong><span id="jHoras">0</span>h</strong>
+      <strong><span id="jMin">0</span>m</strong>
+      <strong><span id="jSeg">0</span>s</strong>
+    </div>
+
+    <div class="pill" id="contadorJuntos">
+      <span class="label">❤️ Tiempo que llevamos juntos (desde 23/05/2025):</span>
+      <strong><span id="gDias">0</span>d</strong>
+      <strong><span id="gHoras">0</span>h</strong>
+      <strong><span id="gMin">0</span>m</strong>
+      <strong><span id="gSeg">0</span>s</strong>
+    </div>
+
+    <div class="pill">
+      <button id="cartaBtn" class="btn">💌 Abrir mi carta</button>
+    </div>
+  </div>
+
+  <!-- Foto -->
+  <div class="foto-wrap">
+    <figure class="foto">
+      <img src="nosotros.jpeg" alt="Nosotros, primer mes 💖">
+      <figcaption>Un mes de risas, mimos y momentos únicos ❤️</figcaption>
+    </figure>
+  </div>
+
+  <!-- Carta -->
+  <div class="carta-wrap">
+    <div id="carta" class="carta">
+      <p>Amor,</p>
+      <p>
+        Gracias por cada <strong>abrazo</strong>, cada <strong>mensaje</strong> y cada <strong>detalle</strong>.  
+        Este primer mes me enseñó que juntos todo es más lindo.  
+        Prometo seguir eligiéndote cada día, en lo simple y en lo grande. 💞
+      </p>
+      <p>
+        <em>Con todo mi corazón,</em><br>
+        <strong>Tu persona favorita ❤️</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz-container">
+    <form id="quizForm">
+      <div class="question">
+        <p>1. ¿Cuándo empezamos a hablar?</p>
+        <label><input type="radio" name="q1" value="a"> 14 de febrero</label>
+        <label><input type="radio" name="q1" value="b"> 23 de mayo </label>
+        <label><input type="radio" name="q1" value="c"> 30 de junio</label>
+      </div>
+      <div class="question">
+        <p>2. ¿Dónde fue que nos vimos por primera vez?</p>
+        <label><input type="radio" name="q2" value="a"> En tu casa </label>
+        <label><input type="radio" name="q2" value="b"> En una plaza</label>
+        <label><input type="radio" name="q2" value="c"> En el colegio</label>
+      </div>
+      <div class="question">
+        <p>3. ¿Cuál fue el primer regalo que te hice?</p>
+        <label><input type="radio" name="q3" value="a"> Una cadena</label>
+        <label><input type="radio" name="q3" value="b"> Un peluche de Stitch </label>
+        <label><input type="radio" name="q3" value="c"> Un anillo</label>
+      </div>
+      <div class="question">
+        <p>4. ¿Dónde salimos por primera vez?</p>
+        <label><input type="radio" name="q4" value="a"> Al cine </label>
+        <label><input type="radio" name="q4" value="b"> A una cafetería</label>
+        <label><input type="radio" name="q4" value="c"> A una feria</label>
+      </div>
+      <div class="question">
+        <p>5. ¿Cómo nos conocimos por primera vez?</p>
+        <label><input type="radio" name="q5" value="a"> En una fiesta</label>
+        <label><input type="radio" name="q5" value="b"> Respondiendo una historia de TikTok </label>
+        <label><input type="radio" name="q5" value="c"> Por un amigo en común</label>
+      </div>
+      <div class="question">
+        <p>6. ¿Qué fuimos a comer la primera vez que salimos a cenar?</p>
+        <label><input type="radio" name="q6" value="a"> Pizzas</label>
+        <label><input type="radio" name="q6" value="b"> Pastas </label>
+        <label><input type="radio" name="q6" value="c"> Hamburguesas</label>
+      </div>
+      <div class="question">
+        <p>7. ¿Qué hice para pedirte ser mi novia y qué hice para el día de la novia?</p>
+        <label><input type="radio" name="q7" value="a"> Te dediqué una canción</label>
+        <label><input type="radio" name="q7" value="b"> Te decoré la pieza con muchas cosas y para el día de la novia te regalé flores con una carta </label>
+        <label><input type="radio" name="q7" value="c"> Te llevé serenata</label>
+      </div>
+      <div class="question">
+        <p>8. ¿Qué película vimos en el cine?</p>
+        <label><input type="radio" name="q8" value="a"> Titanic</label>
+        <label><input type="radio" name="q8" value="b"> Lilo & Stitch </label>
+        <label><input type="radio" name="q8" value="c"> Rapunzel</label>
+      </div>
+      <div class="question">
+        <p>9. ¿Qué es lo que más me gusta de vos?</p>
+        <label><input type="radio" name="q9" value="a"> Tu sonrisa</label>
+        <label><input type="radio" name="q9" value="b"> Tu forma de ser</label>
+        <label><input type="radio" name="q9" value="c"> Tus ojos</label>
+        <label><input type="radio" name="q9" value="d"> Tu ternura</label>
+        <label><input type="radio" name="q9" value="e"> Todo de vos me encanta </label>
+      </div>
+      <div class="question">
+        <p>10. ¿Te gustaron todos los regalos?</p>
+        <label><input type="radio" name="q10" value="a"> Sí, todo amor ❤️ </label>
+        <label><input type="radio" name="q10" value="b"> Algunos</label>
+        <label><input type="radio" name="q10" value="c"> No mucho</label>
+      </div>
+      <button type="button" class="action" onclick="calcular()">Ver resultado 💌</button>
+    </form>
+    <div id="resultado"></div>
+  </div>
+
+  <div class="final">
+    💖 Te amo para toda la vida <br> 
+    "Sofía Agostina Tennen Cornejo" ❤️
+  </div>
+
+  <!-- 🎉 Overlay de celebración -->
+  <div id="celebration">
+    <div id="emojiRain">💖✨🥰✨💖</div>
+    <div class="big-msg">¡Perfecto amor! 10/10 🎉</div>
+    <div id="confetti"></div>
+  </div>
+
+  <script>
+    // ===== Fechas de inicio de los dos contadores =====
+    const START_JULIO  = new Date('2025-07-23T00:00:00'); // desde 23 de julio de 2025
+    const START_JUNTOS = new Date('2025-05-23T00:00:00'); // "tiempo que llevamos juntos" desde 23 de mayo de 2025
+
+    // ===== Música: Play/Pausa =====
+    const music      = document.getElementById('bgMusic');
+    const musicBtn   = document.getElementById('musicBtn');
+    const musicState = document.getElementById('musicState');
+    music.volume = 0.85;
+    musicBtn.addEventListener('click', async () => {
+      try {
+        if (music.paused) {
+          await music.play();
+          musicBtn.textContent = '⏸️ Pausar música';
+          musicState.textContent = 'reproduciendo';
+        } else {
+          music.pause();
+          musicBtn.textContent = '▶️ Reproducir música';
+          musicState.textContent = 'pausada';
+        }
+      } catch(e) {
+        alert('El navegador necesita una interacción para reproducir sonido. Tocá el botón de nuevo.');
+      }
+    });
+
+    // ===== Carta: mostrar/ocultar con animación =====
+    const carta = document.getElementById('carta');
+    const cartaBtn = document.getElementById('cartaBtn');
+    cartaBtn.addEventListener('click', () => {
+      const show = !carta.classList.contains('show');
+      carta.classList.toggle('show', show);
+      cartaBtn.textContent = show ? '💌 Cerrar carta' : '💌 Abrir mi carta';
+    });
+
+    // ===== Contadores =====
+    function setCounter(fromDate, ids){
+      const now   = new Date();
+      let diff    = Math.max(0, now - fromDate);
+      const seg   = Math.floor(diff / 1000);
+      const min   = Math.floor(seg / 60);
+      const hora  = Math.floor(min / 60);
+      const dias  = Math.floor(hora / 24);
+      document.getElementById(ids.d).textContent = dias;
+      document.getElementById(ids.h).textContent = hora % 24;
+      document.getElementById(ids.m).textContent = min % 60;
+      document.getElementById(ids.s).textContent = seg % 60;
+    }
+    function tick(){
+      setCounter(START_JULIO,  {d:'jDias', h:'jHoras', m:'jMin', s:'jSeg'});
+      setCounter(START_JUNTOS, {d:'gDias', h:'gHoras', m:'gMin', s:'gSeg'});
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    // ===== Quiz + Celebración =====
+    const respuestasCorrectas = { q1:"b", q2:"a", q3:"b", q4:"a", q5:"b", q6:"b", q7:"b", q8:"b", q9:"e", q10:"a" };
+
+    function calcular(){
+      let form=document.getElementById("quizForm"); let puntos=0;
+      for (let key in respuestasCorrectas){
+        let radios=form[key]; let respuesta="";
+        for (let r of radios){ if (r.checked) respuesta=r.value; }
+        if (respuesta===respuestasCorrectas[key]) puntos++;
+      }
+      let resultado=document.getElementById("resultado");
+      if (puntos===10){
+        resultado.innerHTML=`🎉 ¡Perfecto amor! Sacaste ${puntos}/10 ❤️<br>Eres lo mejor que me pasó en la vida 💕`;
+        celebrar(); // 🎉 dispara confeti y mensaje gigante
+      } else {
+        resultado.innerHTML=`Obtuviste ${puntos}/10 💖<br>Lo importante es que nuestro amor siempre será verdadero 🥰`;
+      }
+    }
+
+    // 🎉 Mostrar overlay de celebración + confeti por unos segundos
+    function celebrar(){
+      const overlay = document.getElementById('celebration');
+      overlay.classList.add('show');
+      lanzarConfeti(140);
+      setTimeout(()=> overlay.classList.remove('show'), 5500);
+      setTimeout(()=> limpiarConfeti(), 5600);
+    }
+
+    function lanzarConfeti(n=120){
+      const cont = document.getElementById('confetti');
+      const colors = ['#ff3b3b','#ffb300','#5adbb5','#6c63ff','#ff75a0','#00c2ff'];
+      for(let i=0;i<n;i++){
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.left = Math.random()*100 + 'vw';
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.animationDuration = (2.8 + Math.random()*1.6) + 's';
+        p.style.width = (6 + Math.random()*6) + 'px';
+        p.style.height = (10 + Math.random()*10) + 'px';
+        p.style.transform = `rotate(${Math.random()*360}deg)`;
+        cont.appendChild(p);
+      }
+    }
+    function limpiarConfeti(){
+      const cont = document.getElementById('confetti');
+      cont.innerHTML = '';
+    }
+
+    // ❤️ Corazones flotantes (ya estaban)
+    function crearCorazon(){
+      const heart=document.createElement("div");
+      heart.classList.add("heart"); heart.innerHTML="💖";
+      heart.style.left=Math.random()*100+"vw";
+      heart.style.fontSize=(Math.random()*20+20)+"px";
+      document.body.appendChild(heart);
+      setTimeout(()=>heart.remove(),7000);
+    }
+    setInterval(crearCorazon,700); // un poco menos intenso por los pétalos
+
+    // 🌹 Pétalos cayendo
+    const petalContainer = document.getElementById('petals');
+    const petalChars = ['🌹','🥀','🌺','🌸']; // podés dejar solo rosas si querés
+    function crearPetalo(){
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.textContent = petalChars[Math.floor(Math.random()*petalChars.length)];
+      const left = Math.random()*100; // vw
+      const dur = 6 + Math.random()*6; // 6-12s
+      const delaySwing = Math.random()*2;
+      p.style.left = left + 'vw';
+      p.style.animationDuration = `${dur}s, ${2 + Math.random()*2}s`;
+      p.style.animationDelay = `0s, ${delaySwing}s`;
+      p.style.fontSize = (18 + Math.random()*18) + 'px';
+      petalContainer.appendChild(p);
+      setTimeout(()=> p.remove(), (dur+0.2)*1000);
+    }
+    // Crear pétalos de forma constante (liviano)
+    setInterval(crearPetalo, 500);
+  </script>
+</body>
+</html>
